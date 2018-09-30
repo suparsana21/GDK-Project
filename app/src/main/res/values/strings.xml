@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Football Score</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_next_match">Next Match</string>
+    <string name="title_last_match">Last Match</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
