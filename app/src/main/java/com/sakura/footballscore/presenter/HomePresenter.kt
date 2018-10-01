@@ -48,20 +48,4 @@ class HomePresenter (
 
     }
 
-    fun getLookupEvent(id : String?) {
-        view.showLoading()
-
-        doAsync {
-            val data = gson.fromJson(apiService
-                    .doRequest(ApiRepository.getLookupEvent(id)),
-                    EventResponse::class.java
-            )
-
-            uiThread {
-                view.hideLoading()
-                view.showPastEvent(data.events)
-            }
-        }
-
-    }
 }

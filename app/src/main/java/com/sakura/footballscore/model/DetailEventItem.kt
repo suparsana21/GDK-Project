@@ -3,10 +3,9 @@ package com.sakura.footballscore.model
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
-
 @Parcelize
-data class EventsItem(
-	val intHomeShots: Int? = null,
+data class DetailEventItem(
+	val intHomeShots: String? = null,
 	val strSport: String? = null,
 	val strHomeLineupDefense: String? = null,
 	val strAwayLineupSubstitutes: String? = null,
@@ -36,14 +35,14 @@ data class EventsItem(
 	val strDescriptionEN: String? = null,
 	val strResult: String? = null,
 	val strCircuit: String? = null,
-	val intAwayShots: Int? = null,
+	val intAwayShots: String? = null,
 	val strFilename: String? = null,
 	val strTime: String? = null,
 	val strAwayGoalDetails: String? = null,
 	val strAwayLineupForward: String? = null,
 	val strLocked: String? = null,
 	val strSeason: String? = null,
-	val intSpectators: Int? = null,
+	val intSpectators: String? = null,
 	val strHomeRedCards: String? = null,
 	val strHomeLineupGoalkeeper: String? = null,
 	val strHomeLineupSubstitutes: String? = null,

@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.TextView
 import com.google.gson.Gson
 import com.sakura.footballscore.R.color.colorPrimary
 import com.sakura.footballscore.adapter.HomeAdapter
@@ -20,13 +19,10 @@ import com.sakura.footballscore.service.ApiRepository
 import com.sakura.footballscore.service.ApiService
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
-import org.jetbrains.anko.support.v4.UI
-import org.jetbrains.anko.support.v4.ctx
-import org.jetbrains.anko.support.v4.onRefresh
-import org.jetbrains.anko.support.v4.swipeRefreshLayout
+import org.jetbrains.anko.support.v4.*
 
 class MatchFragment : Fragment(), HomeView {
-    private lateinit var listTeam: RecyclerView
+    private lateinit var listEvents: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
@@ -62,7 +58,7 @@ class MatchFragment : Fragment(), HomeView {
                     relativeLayout{
                         lparams (width = matchParent, height = wrapContent)
 
-                        listTeam = recyclerView {
+                        listEvents = recyclerView {
                             lparams (width = matchParent, height = wrapContent)
                             layoutManager = LinearLayoutManager(ctx)
                         }
@@ -78,8 +74,11 @@ class MatchFragment : Fragment(), HomeView {
         }.view
 
 
-        adapter = HomeAdapter(ctx,events)
-        listTeam.adapter = adapter
+        adapter = HomeAdapter(ctx,events){
+            startActivity(intentFor<(DetailActivity)>("id" to it.idEvent))
+        }
+
+        listEvents.adapter = adapter
 
         val request = ApiService()
         val gson = Gson()
@@ -94,6 +93,8 @@ class MatchFragment : Fragment(), HomeView {
         return view
 
     }
+
+
 
     fun refreshOnSwipe() {
         if(tag == "nextEvent") {
