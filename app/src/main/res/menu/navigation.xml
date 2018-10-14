@@ -12,4 +12,9 @@
         android:icon="@drawable/ic_system_update_alt_black_24dp"
         android:title="@string/title_next_match" />
 
+    <item
+        android:id="@+id/navigation_favorite"
+        android:icon="@drawable/ic_added_to_favorites"
+        android:title="@string/title_favorite_match" />
+
 </menu>

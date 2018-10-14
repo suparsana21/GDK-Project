@@ -19,6 +19,10 @@ class MenuActivity : AppCompatActivity() {
                 showFragment("nextEvent")
                 return@OnNavigationItemSelectedListener true
             }
+            R.id.navigation_favorite -> {
+                showFragment("favorit")
+                return@OnNavigationItemSelectedListener true
+            }
         }
         false
     }

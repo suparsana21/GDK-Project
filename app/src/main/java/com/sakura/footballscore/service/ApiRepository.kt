@@ -29,6 +29,8 @@ object ApiRepository {
                 .toString()
     }
 
+
+
     fun getLookupEvent(event : String?) : String {
         return Uri.parse(BuildConfig.BASE_URL).buildUpon()
                 .appendPath("api")

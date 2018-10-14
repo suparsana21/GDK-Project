@@ -6,6 +6,10 @@ import com.sakura.footballscore.model.EventResponse
 import com.sakura.footballscore.model.TeamResponse
 import com.sakura.footballscore.service.ApiRepository
 import com.sakura.footballscore.service.ApiService
+import com.sakura.footballscore.service.CoroutineContextProvider
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -14,39 +18,45 @@ class DetailPresenter (
         private val view : DetailView,
         private val apiRepository : ApiRepository,
         private val apiService: ApiService,
-        private val gson: Gson
+        private val gson: Gson,
+        private val context: CoroutineContextProvider = CoroutineContextProvider()
+
 ) {
-    fun getLookupEvent(id : String?) {
+    fun getLookupEvent(id : String) {
 
-        doAsync {
-            val data = gson.fromJson(apiService
-                    .doRequest(apiRepository.getLookupEvent(id)),
-                    DetailEventResponse::class.java
-            )
 
-            uiThread {
-                view.showDetailEvent(data.events)
+        async(context.main) {
+            val data = bg{
+                gson.fromJson(apiService
+                        .doRequest(apiRepository.getLookupEvent(id)),
+                        DetailEventResponse::class.java
+                )
             }
+            view.showDetailEvent(data.await().events)
+
         }
+
 
     }
 
     fun getLookupTeam(id : String?, type : String?) {
 
-        doAsync {
-            val data = gson.fromJson(apiService
-                    .doRequest(apiRepository.getLookupTeam(id)),
-                    TeamResponse::class.java
-            )
 
-            uiThread {
-                if(type == "HOME") {
-                    view.showDetailHomeTeam(data.teams?.get(0))
-                } else {
-                    view.showDetailAwayTeam(data.teams?.get(0))
-                }
+        async(context.main) {
+            val data = bg {
+                gson.fromJson(apiService
+                        .doRequest(apiRepository.getLookupTeam(id)),
+                        TeamResponse::class.java
+                )
+            }
+
+            if(type == "HOME") {
+                view.showDetailHomeTeam(data.await().teams?.get(0))
+            } else {
+                view.showDetailAwayTeam(data.await().teams?.get(0))
             }
         }
+
 
     }
 

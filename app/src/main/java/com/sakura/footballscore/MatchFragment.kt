@@ -11,8 +11,10 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import com.google.gson.Gson
 import com.sakura.footballscore.R.color.colorPrimary
+import com.sakura.footballscore.adapter.FavoriteAdapter
 import com.sakura.footballscore.adapter.HomeAdapter
 import com.sakura.footballscore.model.EventsItem
+import com.sakura.footballscore.model.Favorite
 import com.sakura.footballscore.presenter.HomePresenter
 import com.sakura.footballscore.presenter.HomeView
 import com.sakura.footballscore.service.ApiRepository
@@ -22,13 +24,17 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.*
 
 class MatchFragment : Fragment(), HomeView {
-    private lateinit var listEvents: RecyclerView
+    lateinit var listEvents: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private var events: MutableList<EventsItem> = mutableListOf()
+    private var favs: MutableList<Favorite> = mutableListOf()
     private lateinit var presenter: HomePresenter
     private lateinit var adapter: HomeAdapter
+    private lateinit var adapterFav : FavoriteAdapter
+
+
 
     companion object {
         fun newInstance() : MatchFragment {
@@ -78,12 +84,15 @@ class MatchFragment : Fragment(), HomeView {
             startActivity(intentFor<(DetailActivity)>("id" to it.idEvent))
         }
 
-        listEvents.adapter = adapter
+        adapterFav = FavoriteAdapter(ctx,favs) {
+            startActivity(intentFor<(DetailActivity)>("id" to it.matchId))
+        }
+
 
         val request = ApiService()
         val gson = Gson()
         val repository = ApiRepository
-        presenter = HomePresenter(this, repository, request, gson)
+        presenter = HomePresenter(this, repository, request, gson, ctx)
 
         firstLoad()
         refreshOnSwipe()
@@ -98,17 +107,28 @@ class MatchFragment : Fragment(), HomeView {
 
     fun refreshOnSwipe() {
         if(tag == "nextEvent") {
+            listEvents.adapter = adapter
             swipeRefresh.onRefresh { presenter.getNextMatch() }
-        } else {
+        } else if(tag == "lastEvent") {
+            listEvents.adapter = adapter
             swipeRefresh.onRefresh { presenter.getLastMatch() }
+        } else {
+            listEvents.adapter = adapterFav
+            swipeRefresh.onRefresh { presenter.getFavMatch() }
+
         }
     }
 
     fun firstLoad() {
         if(tag == "nextEvent") {
+            listEvents.adapter = adapter
             presenter.getNextMatch()
-        } else {
+        } else if(tag == "lastEvent") {
+            listEvents.adapter = adapter
             presenter.getLastMatch()
+        } else {
+            listEvents.adapter = adapterFav
+            presenter.getFavMatch()
         }
     }
 
@@ -132,6 +152,13 @@ class MatchFragment : Fragment(), HomeView {
         events.clear()
         events.addAll(data)
         adapter.notifyDataSetChanged()
+    }
+
+    override fun showFavorite(data: List<Favorite>) {
+        swipeRefresh.isRefreshing = false
+        favs.clear()
+        favs.addAll(data)
+        adapterFav.notifyDataSetChanged()
     }
 
 
